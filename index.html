@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰文字典</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+Thai:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf8f5;
+    --card: #ffffff;
+    --accent: #c8732a;
+    --accent2: #2a6ec8;
+    --text: #1a1612;
+    --muted: #7a6e65;
+    --border: #e8e0d6;
+    --green-bg: #eef7f0;
+    --green-text: #1a6b35;
+    --blue-bg: #eef2fb;
+    --blue-text: #1a3f8c;
+    --tag-bg: #f0ebe4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', 'Noto Serif TC', sans-serif; min-height: 100vh; }
+
+  header { background: var(--text); color: #fff; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 12px; }
+  header .logo { font-size: 22px; }
+  header h1 { font-size: 18px; font-weight: 600; font-family: 'Noto Serif TC', serif; }
+  header p { font-size: 12px; opacity: 0.6; margin-top: 1px; }
+
+  .container { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+  .search-box { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 1rem; margin-bottom: 1rem; display: flex; gap: 8px; }
+  .search-box input { flex: 1; font-size: 20px; font-family: 'Noto Sans Thai', sans-serif; border: none; outline: none; background: transparent; color: var(--text); }
+  .search-box input::placeholder { color: #bbb; font-size: 16px; }
+  .search-box button { background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 10px 18px; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+  .search-box button:hover { background: #a85e1e; }
+  .search-box button:disabled { background: #ccc; cursor: not-allowed; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; align-items: center; }
+  .chip { padding: 5px 14px; border-radius: 100px; border: 1px solid var(--border); background: var(--card); font-size: 13px; color: var(--muted); cursor: pointer; font-family: 'Noto Sans Thai', 'DM Sans', sans-serif; transition: all 0.15s; }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  .word-card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1rem; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .word-hero { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+  .word-thai { font-size: 52px; font-family: 'Noto Sans Thai', sans-serif; font-weight: 700; line-height: 1.1; color: var(--text); }
+  .word-meta { margin-top: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pos-badge { background: var(--blue-bg); color: var(--blue-text); font-size: 12px; padding: 3px 10px; border-radius: 100px; }
+  .romanize { font-size: 14px; color: var(--muted); }
+  .word-zh-block { text-align: right; }
+  .word-zh { font-size: 32px; font-weight: 700; color: var(--accent); font-family: 'Noto Serif TC', serif; }
+
+  .section-label { font-size: 13px; font-weight: 600; color: var(--accent); border-left: 3px solid var(--accent); padding-left: 8px; margin: 1.25rem 0 0.6rem; letter-spacing: 0.02em; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 480px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .mini-card { background: var(--tag-bg); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .mini-card-text .thai { font-size: 16px; font-weight: 600; font-family: 'Noto Sans Thai', sans-serif; color: var(--text); }
+  .mini-card-text .zh { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .colloc-row { background: var(--tag-bg); border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+  .colloc-row-text .thai { font-size: 16px; font-weight: 600; font-family: 'Noto Sans Thai', sans-serif; }
+  .colloc-row-text .zh { font-size: 13px; color: var(--muted); }
+
+  .example-block { background: var(--tag-bg); border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+  .example-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .example-block .thai { font-size: 16px; font-weight: 600; font-family: 'Noto Sans Thai', sans-serif; color: var(--text); flex: 1; }
+  .example-block .zh { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .grammar-note { background: var(--green-bg); color: var(--green-text); font-size: 12px; padding: 6px 10px; border-radius: 8px; line-height: 1.5; }
+
+  .note-block { background: var(--blue-bg); border-left: 3px solid var(--accent2); border-radius: 0 10px 10px 0; padding: 12px 14px; font-size: 14px; color: #2a3a5c; line-height: 1.7; }
+
+  /* 發音按鈕 */
+  .speak-btn { background: none; border: 1px solid var(--border); border-radius: 100px; padding: 4px 10px; font-size: 12px; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; transition: all 0.15s; white-space: nowrap; }
+  .speak-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .speak-btn.playing { border-color: var(--accent); color: var(--accent); }
+
+  /* 底部按鈕區 */
+  .action-row { display: flex; gap: 10px; margin-top: 1.25rem; flex-wrap: wrap; }
+  .youglish-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 100px; background: #c0392b; color: #fff; font-size: 14px; font-weight: 500; border: none; cursor: pointer; text-decoration: none; transition: background 0.15s; }
+  .youglish-btn:hover { background: #962d22; }
+  .anki-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 100px; background: #1a3f8c; color: #fff; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: background 0.15s; }
+  .anki-btn:hover { background: #122d66; }
+
+  .loading-state { text-align: center; padding: 2.5rem 1rem; color: var(--muted); font-size: 15px; }
+  .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-box { background: #fdf0f0; border: 1px solid #f5c6c6; border-radius: 12px; padding: 1rem 1.25rem; color: #8b2020; font-size: 14px; }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+  .empty-state .icon { font-size: 48px; margin-bottom: 1rem; }
+  .empty-state p { font-size: 15px; line-height: 1.7; }
+
+  .api-setup { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 1.25rem; margin-bottom: 1rem; }
+  .api-setup label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 6px; }
+  .api-setup input { width: 100%; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); outline: none; font-family: monospace; color: var(--text); background: var(--bg); }
+  .api-setup input:focus { border-color: var(--accent2); }
+  .api-save-btn { margin-top: 8px; padding: 6px 16px; border-radius: 8px; border: none; background: var(--accent2); color: #fff; font-size: 13px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📖</div>
+  <div>
+    <h1>泰文字典</h1>
+    <p>Thai Dictionary · พจนานุกรมไทย-จีน</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="api-setup" id="api-setup">
+    <label>🔑 Gemini API Key（只需輸入一次，會記住）</label>
+    <input type="password" id="api-key-input" placeholder="貼上你的 API Key…" />
+    <button class="api-save-btn" onclick="saveKey()">儲存</button>
+  </div>
+
+  <div class="search-box">
+    <input id="input" type="text" placeholder="輸入泰文單字…" autocomplete="off" />
+    <button id="btn" onclick="lookup()">查詢</button>
+  </div>
+
+  <div class="chips">
+    <span style="font-size:13px;color:var(--muted);align-self:center;">試試：</span>
+    <button class="chip" onclick="quick('กิน')">กิน 吃</button>
+    <button class="chip" onclick="quick('ไป')">ไป 去</button>
+    <button class="chip" onclick="quick('น้ำ')">น้ำ 水</button>
+    <button class="chip" onclick="quick('รัก')">รัก 愛</button>
+    <button class="chip" onclick="quick('สวย')">สวย 漂亮</button>
+    <button class="chip" onclick="quick('นอน')">นอน 睡</button>
+    <button class="chip" onclick="quick('ดี')">ดี 好</button>
+  </div>
+
+  <div id="result">
+    <div class="empty-state">
+      <div class="icon">🇹🇭</div>
+      <p>輸入任何泰文單字<br>即可查詢詞義、例句與發音</p>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentData = null;
+
+// 載入儲存的 API Key
+window.onload = function() {
+  const saved = localStorage.getItem('gemini_key');
+  if (saved) {
+    document.getElementById('api-key-input').value = saved;
+    document.getElementById('api-setup').style.opacity = '0.5';
+  }
+};
+
+function saveKey() {
+  const k = document.getElementById('api-key-input').value.trim();
+  if (!k) return;
+  localStorage.setItem('gemini_key', k);
+  document.getElementById('api-setup').style.opacity = '0.5';
+  alert('API Key 已儲存！');
+}
+
+function getKey() {
+  return document.getElementById('api-key-input').value.trim() || localStorage.getItem('gemini_key') || '';
+}
+
+function quick(w) {
+  document.getElementById('input').value = w;
+  lookup();
+}
+
+// 發音功能（使用瀏覽器內建 TTS，泰語）
+function speak(text, btn) {
+  if (!window.speechSynthesis) { alert('你的瀏覽器不支援發音功能'); return; }
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'th-TH';
+  utt.rate = 0.9;
+
+  // 嘗試找泰語聲音
+  const voices = window.speechSynthesis.getVoices();
+  const thVoice = voices.find(v => v.lang === 'th-TH' || v.lang === 'th');
+  if (thVoice) utt.voice = thVoice;
+
+  if (btn) {
+    btn.classList.add('playing');
+    btn.textContent = '🔊 播放中…';
+    utt.onend = () => { btn.classList.remove('playing'); btn.innerHTML = '🔊 發音'; };
+    utt.onerror = () => { btn.classList.remove('playing'); btn.innerHTML = '🔊 發音'; };
+  }
+  window.speechSynthesis.speak(utt);
+}
+
+async function lookup() {
+  const word = document.getElementById('input').value.trim();
+  if (!word) return;
+  const key = getKey();
+  if (!key) { alert('請先輸入 Gemini API Key！'); return; }
+
+  const btn = document.getElementById('btn');
+  btn.disabled = true; btn.textContent = '查詢中…';
+  document.getElementById('result').innerHTML = '<div class="loading-state"><div class="spinner"></div>AI 正在查詢「' + esc(word) + '」…</div>';
+
+  const prompt = `你是專業泰文字典，幫助繁體中文使用者學習泰文。
+使用者查詢：${word}
+
+請只回傳 JSON，不要任何說明或 markdown，格式如下：
+{
+  "word": "泰文單字",
+  "romanize": "羅馬拼音",
+  "pos": "詞性（動詞/名詞/形容詞/副詞/助詞等）",
+  "meaning_zh": "中文意思（1-3字）",
+  "synonyms": [{"thai":"近義詞泰文","zh":"中文說明"}],
+  "antonyms": [{"thai":"反義詞泰文","zh":"中文說明"}],
+  "collocations": [{"thai":"搭配詞泰文","zh":"中文說明"}],
+  "examples": [
+    {"thai":"例句泰文","zh":"中文翻譯","grammar":"文法重點（說明句中關鍵語法結構）"},
+    {"thai":"例句泰文","zh":"中文翻譯","grammar":"文法重點（說明句中關鍵語法結構）"}
+  ],
+  "note": "補充說明（用法特色、文化背景、使用情境，若無則空字串）"
+}
+若輸入非泰文單字，回傳 {"error":"請輸入泰文單字"}`;
+
+  try {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || '查詢失敗');
+    let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    raw = raw.replace(/```json|```/g, '').trim();
+    const d = JSON.parse(raw);
+    if (d.error) { document.getElementById('result').innerHTML = '<div class="error-box">' + esc(d.error) + '</div>'; return; }
+    currentData = d;
+    render(d);
+  } catch(e) {
+    document.getElementById('result').innerHTML = '<div class="error-box">查詢失敗：' + esc(e.message) + '</div>';
+  } finally {
+    btn.disabled = false; btn.textContent = '查詢';
+  }
+}
+
+function speakBtn(thai) {
+  return `<button class="speak-btn" onclick="speak('${thai.replace(/'/g,"\\'")}', this)">🔊 發音</button>`;
+}
+
+function render(d) {
+  let h = '<div class="word-card">';
+
+  // 主詞頭
+  h += '<div class="word-hero">';
+  h += '<div>';
+  h += '<div class="word-thai">' + esc(d.word) + '</div>';
+  h += '<div class="word-meta">';
+  h += '<span class="pos-badge">' + esc(d.pos) + '</span>';
+  h += '<span class="romanize">' + esc(d.romanize) + '</span>';
+  h += speakBtn(d.word);
+  h += '</div></div>';
+  h += '<div class="word-zh-block"><div class="word-zh">' + esc(d.meaning_zh) + '</div></div>';
+  h += '</div>';
+
+  // 近義詞 & 反義詞
+  const hasSyn = d.synonyms?.length, hasAnt = d.antonyms?.length;
+  if (hasSyn || hasAnt) {
+    h += '<div class="grid2">';
+    if (hasSyn) {
+      h += '<div><div class="section-label">近義詞</div>';
+      d.synonyms.forEach(s => {
+        h += '<div class="mini-card"><div class="mini-card-text"><div class="thai">' + esc(s.thai) + '</div><div class="zh">' + esc(s.zh) + '</div></div>' + speakBtn(s.thai) + '</div>';
+      });
+      h += '</div>';
+    }
+    if (hasAnt) {
+      h += '<div><div class="section-label">反義詞</div>';
+      d.antonyms.forEach(s => {
+        h += '<div class="mini-card"><div class="mini-card-text"><div class="thai">' + esc(s.thai) + '</div><div class="zh">' + esc(s.zh) + '</div></div>' + speakBtn(s.thai) + '</div>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  // 搭配詞
+  if (d.collocations?.length) {
+    h += '<div class="section-label">常見搭配 (Collocations)</div>';
+    d.collocations.forEach(c => {
+      h += '<div class="colloc-row"><div class="colloc-row-text"><div class="thai">' + esc(c.thai) + '</div><div class="zh">' + esc(c.zh) + '</div></div>' + speakBtn(c.thai) + '</div>';
+    });
+  }
+
+  // 例句
+  if (d.examples?.length) {
+    h += '<div class="section-label">實用例句</div>';
+    d.examples.forEach(ex => {
+      h += '<div class="example-block">';
+      h += '<div class="example-top"><div class="thai">' + esc(ex.thai) + '</div>' + speakBtn(ex.thai) + '</div>';
+      h += '<div class="zh">' + esc(ex.zh) + '</div>';
+      if (ex.grammar) h += '<div class="grammar-note">💡 文法：' + esc(ex.grammar) + '</div>';
+      h += '</div>';
+    });
+  }
+
+  // 補充說明
+  if (d.note) {
+    h += '<div class="section-label">補充說明</div>';
+    h += '<div class="note-block">' + esc(d.note) + '</div>';
+  }
+
+  // 底部按鈕
+  h += '<div class="action-row">';
+  h += '<a class="youglish-btn" href="https://youglish.com/pronounce/' + encodeURIComponent(d.word) + '/thai" target="_blank">🎙 Youglish 真實發音</a>';
+  h += '<button class="anki-btn" onclick="exportAnki()">📥 匯出到 Anki (CSV)</button>';
+  h += '</div>';
+
+  h += '</div>';
+  document.getElementById('result').innerHTML = h;
+}
+
+function exportAnki() {
+  if (!currentData) return;
+  const d = currentData;
+
+  // Anki CSV 格式：正面, 背面（Tab 分隔）
+  const rows = [];
+  rows.push(['#separator:tab']);
+  rows.push(['#html:true']);
+  rows.push(['#notetype:Basic']);
+
+  // 主卡：泰文 → 中文+資訊
+  let back = `<b style="font-size:1.4em;color:#c8732a;">${d.meaning_zh}</b><br>`;
+  back += `<span style="color:#666;">${d.romanize} ／ ${d.pos}</span><br><br>`;
+
+  if (d.synonyms?.length) {
+    back += `<b>近義詞：</b>${d.synonyms.map(s => s.thai + '（' + s.zh + '）').join('、')}<br>`;
+  }
+  if (d.antonyms?.length) {
+    back += `<b>反義詞：</b>${d.antonyms.map(s => s.thai + '（' + s.zh + '）').join('、')}<br>`;
+  }
+  if (d.collocations?.length) {
+    back += `<br><b>搭配詞：</b><br>` + d.collocations.map(c => `・${c.thai} = ${c.zh}`).join('<br>') + '<br>';
+  }
+  if (d.examples?.length) {
+    back += `<br><b>例句：</b><br>` + d.examples.map(ex => `・${ex.thai}<br>　${ex.zh}`).join('<br>') + '<br>';
+  }
+  if (d.note) {
+    back += `<br><b>補充：</b>${d.note}`;
+  }
+
+  rows.push([d.word, back]);
+
+  const tsv = rows.map(r => r.join('\t')).join('\n');
+  const blob = new Blob(['\uFEFF' + tsv], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = d.word + '_anki.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('input').addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
+
+// 預載語音
+window.speechSynthesis?.getVoices();
+setTimeout(() => window.speechSynthesis?.getVoices(), 500);
+</script>
+</body>
+</html>
